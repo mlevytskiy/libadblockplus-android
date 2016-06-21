@@ -85,7 +85,7 @@ public class UpdateCheckTest extends BaseJsTest
     {
         jsEngine = new JsEngine(appInfo);
         jsEngine.setLogSystem(new LazyLogSystem());
-        jsEngine.setDefaultFileSystem("/");
+        jsEngine.setDefaultFileSystem(getContext().getFilesDir().getAbsolutePath());
         jsEngine.setWebRequest(webRequest);
         jsEngine.setEventCallback("updateAvailable", eventCallback);
 

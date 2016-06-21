@@ -39,7 +39,6 @@ public class NotificationTest extends BaseJsTest {
     protected void setUp() throws Exception {
         super.setUp();
 
-        jsEngine.setLogSystem(new LazyLogSystem());
         jsEngine.setWebRequest(new LazyWebRequest());
         filterEngine = new FilterEngine(jsEngine);
     }
