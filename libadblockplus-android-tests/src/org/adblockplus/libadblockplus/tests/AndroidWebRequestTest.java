@@ -23,26 +23,31 @@ import org.adblockplus.libadblockplus.ServerResponse;
 
 import org.junit.Test;
 
-public class AndroidWebRequestTest extends BaseJsTest {
-
+public class AndroidWebRequestTest extends BaseJsTest
+{
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() throws Exception
+    {
         super.setUp();
 
         jsEngine.setWebRequest(new AndroidWebRequest());
     }
 
     @Test
-    public void testRealWebRequest() {
+    public void testRealWebRequest()
+    {
         // This URL should redirect to easylist-downloads.adblockplus.org and we
         // should get the actual filter list back.
         jsEngine.evaluate(
             "_webRequest.GET('https://easylist-downloads.adblockplus.org/easylist.txt', {}, " +
                 "function(result) {foo = result;} )");
-        do {
-            try {
+        do
+        {
+            try
+            {
                 Thread.sleep(200);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException e)
+            {
                 throw new RuntimeException(e);
             }
         } while (jsEngine.evaluate("this.foo").isUndefined());
@@ -68,7 +73,8 @@ public class AndroidWebRequestTest extends BaseJsTest {
     }
 
     @Test
-    public void testXMLHttpRequest() {
+    public void testXMLHttpRequest()
+    {
         jsEngine.evaluate(
             "var result;\n" +
             "var request = new XMLHttpRequest();\n" +
@@ -80,10 +86,13 @@ public class AndroidWebRequestTest extends BaseJsTest {
             "request.addEventListener('error',function() {result='error';}, false);\n" +
             "request.send(null);");
 
-        do {
-            try {
+        do
+        {
+            try
+            {
                 Thread.sleep(200);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException e)
+            {
                 throw new RuntimeException(e);
             }
         } while (jsEngine.evaluate("result").isUndefined());

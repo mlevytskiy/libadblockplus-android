@@ -22,10 +22,11 @@ import org.adblockplus.libadblockplus.JsEngine;
 
 import org.junit.Test;
 
-public class AppInfoJsObjectTest extends BaseJsTest {
-
+public class AppInfoJsObjectTest extends BaseJsTest
+{
     @Test
-    public void testAllProperties() {
+    public void testAllProperties()
+    {
         AppInfo appInfo = AppInfo
             .builder()
             .setVersion("1")
@@ -46,7 +47,8 @@ public class AppInfoJsObjectTest extends BaseJsTest {
     }
 
     @Test
-    public void testDefaultPropertyValues() {
+    public void testDefaultPropertyValues()
+    {
         AppInfo appInfo = AppInfo
             .builder()
             .build();

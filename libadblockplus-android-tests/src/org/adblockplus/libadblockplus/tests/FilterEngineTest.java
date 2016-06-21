@@ -25,10 +25,11 @@ import org.adblockplus.libadblockplus.Subscription;
 
 import org.junit.Test;
 
-public class FilterEngineTest extends FilterEngineGenericTest {
-
+public class FilterEngineTest extends FilterEngineGenericTest
+{
     @Test
-    public void testFilterCreation() {
+    public void testFilterCreation()
+    {
         Filter filter1 = filterEngine.getFilter("foo");
         assertEquals(Filter.Type.BLOCKING, filter1.getType());
         Filter filter2 = filterEngine.getFilter("@@foo");
@@ -42,18 +43,8 @@ public class FilterEngineTest extends FilterEngineGenericTest {
     }
 
     @Test
-    public void testFilterProperties() {
-        Filter filter = filterEngine.getFilter("foo");
-
-        assertTrue(filter.getProperty("stringFoo").isUndefined());
-        assertTrue(filter.getProperty("intFoo").isUndefined());
-        assertTrue(filter.getProperty("boolFoo").isUndefined());
-
-        // TODO : since there is no setProperty for Filter finish the test later
-    }
-
-    @Test
-    public void testAddRemoveFilters() {
+    public void testAddRemoveFilters()
+    {
         while (filterEngine.getListedFilters().size() > 0)
             filterEngine.getListedFilters().get(0).removeFromList();
 
@@ -82,18 +73,8 @@ public class FilterEngineTest extends FilterEngineGenericTest {
     }
 
     @Test
-    public void testSubscriptionProperties() {
-        Subscription subscription = filterEngine.getSubscription("foo");
-
-        assertTrue(subscription.getProperty("stringFoo").isUndefined());
-        assertTrue(subscription.getProperty("intFoo").isUndefined());
-        assertTrue(subscription.getProperty("boolFoo").isUndefined());
-
-        // TODO : since there is no setProperty finish the test later
-    }
-
-    @Test
-    public void testAddRemoveSubscriptions() {
+    public void testAddRemoveSubscriptions()
+    {
         while (filterEngine.getListedSubscriptions().size() > 0)
             filterEngine.getListedSubscriptions().get(0).removeFromList();
 
@@ -118,14 +99,16 @@ public class FilterEngineTest extends FilterEngineGenericTest {
     }
 
     @Test
-    public void testSubscriptionUpdates() {
+    public void testSubscriptionUpdates()
+    {
         Subscription subscription = filterEngine.getSubscription("foo");
         assertFalse(subscription.isUpdating());
         subscription.updateFilters();
     }
 
     @Test
-    public void testMatches() {
+    public void testMatches()
+    {
         filterEngine.getFilter("adbanner.gif").addToList();
         filterEngine.getFilter("@@notbanner.gif").addToList();
         filterEngine.getFilter("tpbanner.gif$third-party").addToList();
@@ -213,7 +196,8 @@ public class FilterEngineTest extends FilterEngineGenericTest {
     }
 
     @Test
-    public void testMatchesOnWhitelistedDomain() {
+    public void testMatchesOnWhitelistedDomain()
+    {
         filterEngine.getFilter("adbanner.gif").addToList();
         filterEngine.getFilter("@@||example.org^$document").addToList();
 
@@ -233,14 +217,16 @@ public class FilterEngineTest extends FilterEngineGenericTest {
     }
 
     @Test
-    public void testMatchesNestedFrameRequest() {
+    public void testMatchesNestedFrameRequest()
+    {
         filterEngine.getFilter("adbanner.gif").addToList();
         filterEngine.getFilter("@@adbanner.gif$domain=example.org").addToList();
 
         Filter match1 = filterEngine.matches(
             "http://ads.com/adbanner.gif",
             FilterEngine.ContentType.IMAGE,
-            new String[] {
+            new String[]
+            {
                 "http://ads.com/frame/",
                 "http://example.com/"
             });
@@ -250,7 +236,8 @@ public class FilterEngineTest extends FilterEngineGenericTest {
         Filter match2 = filterEngine.matches(
             "http://ads.com/adbanner.gif",
             FilterEngine.ContentType.IMAGE,
-            new String[] {
+            new String[]
+            {
                 "http://ads.com/frame/",
                 "http://example.org/"
             });
@@ -260,7 +247,8 @@ public class FilterEngineTest extends FilterEngineGenericTest {
         Filter match3 = filterEngine.matches(
             "http://ads.com/adbanner.gif",
             FilterEngine.ContentType.IMAGE,
-            new String[] {
+            new String[]
+            {
                 "http://example.org/",
                 "http://ads.com/frame/"
             });
@@ -269,14 +257,16 @@ public class FilterEngineTest extends FilterEngineGenericTest {
     }
 
     @Test
-    public void testMatchesNestedFrameOnWhitelistedDomain() {
+    public void testMatchesNestedFrameOnWhitelistedDomain()
+    {
         filterEngine.getFilter("adbanner.gif").addToList();
         filterEngine.getFilter("@@||example.org^$document,domain=ads.com").addToList();
 
         Filter match1 = filterEngine.matches(
             "http://ads.com/adbanner.gif",
             FilterEngine.ContentType.IMAGE,
-            new String[] {
+            new String[]
+            {
                 "http://ads.com/frame/",
                 "http://example.com/"
             });
@@ -286,7 +276,8 @@ public class FilterEngineTest extends FilterEngineGenericTest {
         Filter match2 = filterEngine.matches(
             "http://ads.com/adbanner.gif",
             FilterEngine.ContentType.IMAGE,
-            new String[] {
+            new String[]
+            {
                 "http://ads.com/frame/",
                 "http://example.org/"
             });
@@ -296,17 +287,18 @@ public class FilterEngineTest extends FilterEngineGenericTest {
         Filter match3 = filterEngine.matches(
             "http://ads.com/adbanner.gif",
             FilterEngine.ContentType.IMAGE,
-            new String[] {
+            new String[]
+            {
                 "http://example.org/"
             });
         assertNotNull(match3);
-        Log.d("abp", "checking filter type ...");
         assertEquals(Filter.Type.BLOCKING, match3.getType());
 
         Filter match4 = filterEngine.matches(
             "http://ads.com/adbanner.gif",
             FilterEngine.ContentType.IMAGE,
-            new String[] {
+            new String[]
+            {
                 "http://example.org/",
                 "http://ads.com/frame/"
             });
@@ -316,7 +308,8 @@ public class FilterEngineTest extends FilterEngineGenericTest {
         Filter match5 = filterEngine.matches(
             "http://ads.com/adbanner.gif",
             FilterEngine.ContentType.IMAGE,
-            new String[]{
+            new String[]
+            {
                 "http://ads.com/frame/",
                 "http://example.org/",
                 "http://example.com/"
@@ -326,12 +319,14 @@ public class FilterEngineTest extends FilterEngineGenericTest {
     }
 
     @Test
-    public void testFirstRunFlag() {
+    public void testFirstRunFlag()
+    {
         assertFalse(filterEngine.isFirstRun());
     }
 
     @Test
-    public void testSetRemoveFilterChangeCallback() {
+    public void testSetRemoveFilterChangeCallback()
+    {
         MockFilterChangeCallback mockFilterChangeCallback = new MockFilterChangeCallback(0);
 
         filterEngine.setFilterChangeCallback(mockFilterChangeCallback);
@@ -344,31 +339,46 @@ public class FilterEngineTest extends FilterEngineGenericTest {
     }
 
     @Test
-    public void testDocumentWhitelisting() {
+    public void testDocumentWhitelisting()
+    {
         filterEngine.getFilter("@@||example.org^$document").addToList();
         filterEngine.getFilter("@@||example.com^$document,domain=example.de").addToList();
 
-        assertTrue(filterEngine.isDocumentWhitelisted("http://example.org", new String[] {}));
-        assertFalse(filterEngine.isDocumentWhitelisted("http://example.co.uk", new String[] {}));
-        assertFalse(filterEngine.isDocumentWhitelisted("http://example.com", new String[] {}));
+        String[] emptyArray = new String[]
+        {
+        };
 
-        String[] documentUrls1 = new String[] { "http://example.de" };
+        assertTrue(filterEngine.isDocumentWhitelisted("http://example.org", emptyArray));
+        assertFalse(filterEngine.isDocumentWhitelisted("http://example.co.uk", emptyArray));
+        assertFalse(filterEngine.isDocumentWhitelisted("http://example.com", emptyArray));
+
+        String[] documentUrls1 = new String[]
+        {
+            "http://example.de"
+        };
         assertTrue(filterEngine.isDocumentWhitelisted("http://example.com", documentUrls1));
         assertFalse(filterEngine.isDocumentWhitelisted("http://example.co.uk", documentUrls1));
     }
 
     @Test
-    public void testElemhideWhitelisting() {
+    public void testElemhideWhitelisting()
+    {
         filterEngine.getFilter("@@||example.org^$elemhide").addToList();
         filterEngine.getFilter("@@||example.com^$elemhide,domain=example.de").addToList();
 
-        assertTrue(filterEngine.isElemhideWhitelisted("http://example.org", new String[] {}));
-        assertFalse(filterEngine.isElemhideWhitelisted("http://example.co.uk", new String[] {}));
-        assertFalse(filterEngine.isElemhideWhitelisted("http://example.com", new String[] {}));
+        String[] emptyArray = new String[]
+        {
+        };
 
-        String[] documentUrls1 = new String[] { "http://example.de" };
+        assertTrue(filterEngine.isElemhideWhitelisted("http://example.org", emptyArray));
+        assertFalse(filterEngine.isElemhideWhitelisted("http://example.co.uk", emptyArray));
+        assertFalse(filterEngine.isElemhideWhitelisted("http://example.com", emptyArray));
+
+        String[] documentUrls1 = new String[]
+        {
+            "http://example.de"
+        };
         assertTrue(filterEngine.isElemhideWhitelisted("http://example.com", documentUrls1));
         assertFalse(filterEngine.isElemhideWhitelisted("http://example.co.uk", documentUrls1));
     }
-
 }

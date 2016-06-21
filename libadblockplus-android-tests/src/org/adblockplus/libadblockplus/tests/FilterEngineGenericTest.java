@@ -20,15 +20,15 @@ package org.adblockplus.libadblockplus.tests;
 import org.adblockplus.libadblockplus.FilterEngine;
 import org.adblockplus.libadblockplus.LazyWebRequest;
 
-public abstract class FilterEngineGenericTest extends BaseJsTest {
-
+public abstract class FilterEngineGenericTest extends BaseJsTest
+{
     protected FilterEngine filterEngine;
 
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() throws Exception
+    {
         super.setUp();
 
-        // TODO : use LazyFileSystem impl for file system
         jsEngine.setWebRequest(new LazyWebRequest());
         jsEngine.setDefaultLogSystem();
 

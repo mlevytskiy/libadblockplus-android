@@ -22,12 +22,13 @@ import org.adblockplus.libadblockplus.MockLogSystem;
 
 import org.junit.Test;
 
-public class ConsoleJsObjectTest extends BaseJsTest {
-
+public class ConsoleJsObjectTest extends BaseJsTest
+{
     protected MockLogSystem mockLogSystem;
 
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() throws Exception
+    {
         super.setUp();
 
         mockLogSystem = new MockLogSystem();
@@ -35,7 +36,8 @@ public class ConsoleJsObjectTest extends BaseJsTest {
     }
 
     @Test
-    public void testConsoleLogCall() {
+    public void testConsoleLogCall()
+    {
         jsEngine.evaluate("\n\nconsole.log('foo', 'bar');\n\n", "eval");
         assertEquals(LogSystem.LogLevel.LOG, mockLogSystem.getLastLogLevel());
         assertEquals("foo bar", mockLogSystem.getLastMessage());
@@ -43,7 +45,8 @@ public class ConsoleJsObjectTest extends BaseJsTest {
     }
 
     @Test
-    public void testConsoleDebugCall() {
+    public void testConsoleDebugCall()
+    {
         jsEngine.evaluate("console.debug('foo', 'bar')");
         assertEquals(LogSystem.LogLevel.LOG, mockLogSystem.getLastLogLevel());
         assertEquals("foo bar", mockLogSystem.getLastMessage());
@@ -51,7 +54,8 @@ public class ConsoleJsObjectTest extends BaseJsTest {
     }
 
     @Test
-    public void testConsoleInfoCall() {
+    public void testConsoleInfoCall()
+    {
         jsEngine.evaluate("console.info('foo', 'bar')");
         assertEquals(LogSystem.LogLevel.INFO, mockLogSystem.getLastLogLevel());
         assertEquals("foo bar", mockLogSystem.getLastMessage());
@@ -59,7 +63,8 @@ public class ConsoleJsObjectTest extends BaseJsTest {
     }
 
     @Test
-    public void testConsoleWarnCall() {
+    public void testConsoleWarnCall()
+    {
         jsEngine.evaluate("console.warn('foo', 'bar')");
         assertEquals(LogSystem.LogLevel.WARN, mockLogSystem.getLastLogLevel());
         assertEquals("foo bar", mockLogSystem.getLastMessage());
@@ -67,7 +72,8 @@ public class ConsoleJsObjectTest extends BaseJsTest {
     }
 
     @Test
-    public void testConsoleErrorCall() {
+    public void testConsoleErrorCall()
+    {
         jsEngine.evaluate("console.error('foo', 'bar')");
         assertEquals(LogSystem.LogLevel.ERROR, mockLogSystem.getLastLogLevel());
         assertEquals("foo bar", mockLogSystem.getLastMessage());
@@ -75,7 +81,8 @@ public class ConsoleJsObjectTest extends BaseJsTest {
     }
 
     @Test
-    public void testConsoleTraceCall() {
+    public void testConsoleTraceCall()
+    {
         jsEngine.evaluate(
             "\n" +
             "function foo()\n" +

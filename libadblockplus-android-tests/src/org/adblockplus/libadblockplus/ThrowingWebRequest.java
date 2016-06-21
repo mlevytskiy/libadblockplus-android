@@ -19,10 +19,11 @@ package org.adblockplus.libadblockplus;
 
 import java.util.List;
 
-public class ThrowingWebRequest extends WebRequest {
-
+public class ThrowingWebRequest extends WebRequest
+{
     @Override
-    public ServerResponse httpGET(String url, List<HeaderEntry> headers) {
+    public ServerResponse httpGET(String url, List<HeaderEntry> headers)
+    {
         throw new RuntimeException("Unexpected GET: " + url);
     }
 }

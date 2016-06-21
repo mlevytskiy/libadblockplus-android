@@ -17,28 +17,32 @@
 
 package org.adblockplus.libadblockplus;
 
-public class MockLogSystem extends LogSystem {
-
+public class MockLogSystem extends LogSystem
+{
     private LogLevel lastLogLevel;
 
-    public LogLevel getLastLogLevel() {
+    public LogLevel getLastLogLevel()
+    {
         return lastLogLevel;
     }
 
     private String lastMessage;
 
-    public String getLastMessage() {
+    public String getLastMessage()
+    {
         return lastMessage;
     }
 
     private String lastSource;
 
-    public String getLastSource() {
+    public String getLastSource()
+    {
         return lastSource;
     }
 
     @Override
-    public void logCallback(LogLevel logLevel, String message, String source) {
+    public void logCallback(LogLevel logLevel, String message, String source)
+    {
         lastLogLevel = logLevel;
         lastMessage = message;
         lastSource = source;

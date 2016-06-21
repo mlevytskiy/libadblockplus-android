@@ -21,10 +21,11 @@ import org.adblockplus.libadblockplus.AdblockPlusException;
 
 import org.junit.Test;
 
-public class GlobalJsObjectTest extends BaseJsTest {
-
+public class GlobalJsObjectTest extends BaseJsTest
+{
     @Test
-    public void testSetTimeout() throws InterruptedException {
+    public void testSetTimeout() throws InterruptedException
+    {
         jsEngine.evaluate("setTimeout(function() {foo = 'bar';}, 100)");
         assertTrue(jsEngine.evaluate("this.foo").isUndefined());
         Thread.sleep(200);
@@ -32,7 +33,8 @@ public class GlobalJsObjectTest extends BaseJsTest {
     }
 
     @Test
-    public void testSetTimeoutWithArgs() throws InterruptedException {
+    public void testSetTimeoutWithArgs() throws InterruptedException
+    {
         jsEngine.evaluate("setTimeout(function(s) {foo = s;}, 100, 'foobar')");
         assertTrue(jsEngine.evaluate("this.foo").isUndefined());
         Thread.sleep(200);
@@ -40,29 +42,34 @@ public class GlobalJsObjectTest extends BaseJsTest {
     }
 
     @Test
-    public void testSetTimeoutWithInvalidArgs() {
-        try {
+    public void testSetTimeoutWithInvalidArgs()
+    {
+        try
+        {
             jsEngine.evaluate("setTimeout()");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
 
-        try {
+        try
+        {
             jsEngine.evaluate("setTimeout('', 1)");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
     }
 
     @Test
-    public void testSetMultipleTimeouts() throws InterruptedException {
+    public void testSetMultipleTimeouts() throws InterruptedException
+    {
         jsEngine.evaluate("foo = []");
         jsEngine.evaluate("setTimeout(function(s) {foo.push('1');}, 100)");
         jsEngine.evaluate("setTimeout(function(s) {foo.push('2');}, 150)");
         Thread.sleep(200);
         assertEquals("1,2", jsEngine.evaluate("this.foo").asString());
     }
-
 }

@@ -17,20 +17,23 @@
 
 package org.adblockplus.libadblockplus;
 
-public class MockFilterChangeCallback extends FilterChangeCallback {
+public class MockFilterChangeCallback extends FilterChangeCallback
+{
+    private int timesCalled;
 
-    public MockFilterChangeCallback(int timesCalled) {
+    public MockFilterChangeCallback(int timesCalled)
+    {
         this.timesCalled = timesCalled;
     }
 
-    private int timesCalled;
-
-    public int getTimesCalled() {
+    public int getTimesCalled()
+    {
         return timesCalled;
     }
 
     @Override
-    public void filterChangeCallback(String action, JsValue jsValue) {
+    public void filterChangeCallback(String action, JsValue jsValue)
+    {
         timesCalled++;
     }
 }

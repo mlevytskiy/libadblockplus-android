@@ -44,7 +44,8 @@ public class NotificationTest extends BaseJsTest {
         filterEngine = new FilterEngine(jsEngine);
     }
 
-    protected void addNotification(String notification) {
+    protected void addNotification(String notification)
+    {
         jsEngine.evaluate(
             "(function()\n" +
             "{\n" +
@@ -54,22 +55,25 @@ public class NotificationTest extends BaseJsTest {
 
     private static final String TAG = "notification";
 
-    private class LocalShowNotificationCallback extends ShowNotificationCallback {
-
+    private class LocalShowNotificationCallback extends ShowNotificationCallback
+    {
         private Notification retValue;
 
-        public Notification getRetValue() {
+        public Notification getRetValue()
+        {
             return retValue;
         }
 
         @Override
-        public void showNotificationCallback(Notification notification) {
+        public void showNotificationCallback(Notification notification)
+        {
             Log.d(TAG, this + " received [" + notification + "]");
             retValue = notification;
         }
     }
 
-    protected Notification peekNotification(String url) throws InterruptedException {
+    protected Notification peekNotification(String url) throws InterruptedException
+    {
         Log.d(TAG, "Start peek");
 
         LocalShowNotificationCallback callback = new LocalShowNotificationCallback();
@@ -81,16 +85,18 @@ public class NotificationTest extends BaseJsTest {
         return callback.getRetValue();
     }
 
-    private class MockWebRequest extends WebRequest {
-
-        public MockWebRequest(String notification) {
-            this.responseText = notification;
-        }
-
+    private class MockWebRequest extends WebRequest
+    {
         private String responseText;
 
+        public MockWebRequest(String responseText)
+        {
+            this.responseText = responseText;
+        }
+
         @Override
-        public ServerResponse httpGET(String url, List<HeaderEntry> headers) {
+        public ServerResponse httpGET(String url, List<HeaderEntry> headers)
+        {
             if (url.indexOf("/notification.json") < 0)
                 return new ServerResponse();
 
@@ -103,12 +109,14 @@ public class NotificationTest extends BaseJsTest {
     }
 
     @Test
-    public void testNoNotifications() throws InterruptedException {
+    public void testNoNotifications() throws InterruptedException
+    {
         assertNull(peekNotification(""));
     }
 
     @Test
-    public void testAddNotification() throws InterruptedException {
+    public void testAddNotification() throws InterruptedException
+    {
         addNotification(
             "{\n" +
             "   type: 'critical',\n" +
@@ -123,7 +131,8 @@ public class NotificationTest extends BaseJsTest {
     }
 
     @Test
-    public void testFilterByUrl() throws InterruptedException {
+    public void testFilterByUrl() throws InterruptedException
+    {
         addNotification("{ id:'no-filter', type:'critical' }");
         addNotification("{ id:'www.com', type:'information', urlFilters:['||www.com$document'] }");
         addNotification("{ id:'www.de', type:'question', urlFilters:['||www.de$document'] }");
@@ -142,7 +151,8 @@ public class NotificationTest extends BaseJsTest {
     }
 
     @Test
-    public void testMarkAsShown() throws InterruptedException {
+    public void testMarkAsShown() throws InterruptedException
+    {
         addNotification("{ type: 'question' }");
         assertNotNull(peekNotification(""));
 

@@ -17,10 +17,11 @@
 
 package org.adblockplus.libadblockplus;
 
-public class ThrowingLogSystem extends LogSystem {
-
+public class ThrowingLogSystem extends LogSystem
+{
     @Override
-    public void logCallback(LogLevel level, String message, String source) {
+    public void logCallback(LogLevel level, String message, String source)
+    {
         throw new RuntimeException("Unexpected error: " + message);
     }
 }

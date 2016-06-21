@@ -19,10 +19,11 @@ package org.adblockplus.libadblockplus;
 
 import java.util.List;
 
-public class LazyWebRequest extends WebRequest {
-
+public class LazyWebRequest extends WebRequest
+{
     @Override
-    public ServerResponse httpGET(String url, List<HeaderEntry> headers) {
+    public ServerResponse httpGET(String url, List<HeaderEntry> headers)
+    {
         while (true);
     }
 }

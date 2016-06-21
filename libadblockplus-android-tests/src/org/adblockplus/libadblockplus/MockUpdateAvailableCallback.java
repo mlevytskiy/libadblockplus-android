@@ -17,20 +17,23 @@
 
 package org.adblockplus.libadblockplus;
 
-public class MockUpdateAvailableCallback extends UpdateAvailableCallback {
+public class MockUpdateAvailableCallback extends UpdateAvailableCallback
+{
+    private int timesCalled;
 
-    public MockUpdateAvailableCallback(int timesCalled) {
+    public MockUpdateAvailableCallback(int timesCalled)
+    {
         this.timesCalled = timesCalled;
     }
 
-    private int timesCalled;
-
-    public int getTimesCalled() {
+    public int getTimesCalled()
+    {
         return timesCalled;
     }
 
     @Override
-    public void updateAvailableCallback(String url) {
+    public void updateAvailableCallback(String url)
+    {
         timesCalled++;
     }
 }

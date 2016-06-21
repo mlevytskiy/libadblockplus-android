@@ -25,10 +25,11 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JsTest extends BaseJsTest {
-
+public class JsTest extends BaseJsTest
+{
     @Test
-    public void testUndefinedValue() {
+    public void testUndefinedValue()
+    {
         final JsValue value = jsEngine.evaluate("undefined");
         assertTrue(value.isUndefined());
         assertFalse(value.isNull());
@@ -38,22 +39,27 @@ public class JsTest extends BaseJsTest {
         assertFalse(value.isObject());
         assertFalse(value.isArray());
         assertEquals("undefined", value.asString());
-        try {
+        try
+        {
             value.asList();
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
-        try {
+        try
+        {
             value.getProperty("foo");
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
     }
 
     @Test
-    public void testNullValue() {
+    public void testNullValue()
+    {
         final JsValue value = jsEngine.evaluate("null");
         assertFalse(value.isUndefined());
         assertTrue(value.isNull());
@@ -65,22 +71,27 @@ public class JsTest extends BaseJsTest {
         assertFalse(value.isFunction());
         assertEquals("null", value.asString());
         assertFalse(value.asBoolean());
-        try {
+        try
+        {
             value.asList();
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
-        try {
+        try
+        {
             value.getProperty("foo");
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
     }
 
     @Test
-    public void testStringValue() {
+    public void testStringValue()
+    {
         JsValue value = jsEngine.evaluate("'123'");
         assertFalse(value.isUndefined());
         assertFalse(value.isNull());
@@ -93,22 +104,27 @@ public class JsTest extends BaseJsTest {
         assertEquals("123", value.asString());
         assertEquals(123l, value.asLong());
         assertTrue(value.asBoolean());
-        try {
+        try
+        {
             value.asList();
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
-        try {
+        try
+        {
             value.getProperty("foo");
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
     }
 
     @Test
-    public void testLongValue() {
+    public void testLongValue()
+    {
         JsValue value = jsEngine.evaluate("12345678901234");
         assertFalse(value.isUndefined());
         assertFalse(value.isNull());
@@ -121,22 +137,26 @@ public class JsTest extends BaseJsTest {
         assertEquals("12345678901234", value.asString());
         assertEquals(12345678901234l, value.asLong());
         assertTrue(value.asBoolean());
-        try {
+        try
+        {
             value.asList();
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
         try {
             value.getProperty("foo");
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
     }
 
     @Test
-    public void testBoolValue() {
+    public void testBoolValue()
+    {
         JsValue value = jsEngine.evaluate("true");
         assertFalse(value.isUndefined());
         assertFalse(value.isNull());
@@ -148,22 +168,27 @@ public class JsTest extends BaseJsTest {
         assertFalse(value.isFunction());
         assertEquals("true", value.asString());
         assertTrue(value.asBoolean());
-        try {
+        try
+        {
             value.asList();
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
-        try {
+        try
+        {
             value.getProperty("foo");
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
     }
 
     @Test
-    public void testObjectValue() {
+    public void testObjectValue()
+    {
         final String source =
             "function Foo() {\n" +
             "   this.x = 2;\n" +
@@ -183,17 +208,20 @@ public class JsTest extends BaseJsTest {
         assertEquals("foo", value.asString());
         assertEquals(123l, value.asLong());
         assertTrue(value.asBoolean());
-        try {
+        try
+        {
             value.asList();
             fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
         assertEquals(2l, value.getProperty("x").asLong());
     }
 
     @Test
-    public void testArrayValue() {
+    public void testArrayValue()
+    {
         JsValue value = jsEngine.evaluate("[5,8,12]");
         assertFalse(value.isUndefined());
         assertFalse(value.isNull());
@@ -212,36 +240,8 @@ public class JsTest extends BaseJsTest {
     }
 
     @Test
-    public void testFunctionValue() {
-        JsValue value = jsEngine.evaluate(
-            "(function(foo, bar) {return this.x + '/' + foo + '/' + bar;})");
-        assertFalse(value.isUndefined());
-        assertFalse(value.isNull());
-        assertFalse(value.isString());
-        assertFalse(value.isBoolean());
-        assertFalse(value.isNumber());
-        assertTrue(value.isObject());
-        assertFalse(value.isArray());
-        assertTrue(value.isFunction());
-        assertTrue(value.asBoolean());
-        try {
-            value.asList();
-            fail(AdblockPlusException.class.getSimpleName() + " is expected to be thrown");
-        } catch (AdblockPlusException e) {
-            // ignored
-        }
-        assertEquals(2l, value.getProperty("length").asLong());
-
-        JsValue thisValue = jsEngine.evaluate("({x:2})");
-        List<JsValue> params = new ArrayList<JsValue>();
-        params.add(jsEngine.newValue(5l));
-        params.add(jsEngine.newValue("xyz"));
-
-        // TODO : finish when method jsValue.call() is created
-    }
-
-    @Test
-    public void testThrowingCoversion() {
+    public void testThrowingCoversion()
+    {
         final String source =
             "function Foo() {\n" +
             "   this.toString = function() {throw 'test1';};\n" +

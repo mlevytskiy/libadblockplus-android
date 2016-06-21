@@ -24,13 +24,14 @@ import org.adblockplus.libadblockplus.MockWebRequest;
 
 import android.test.AndroidTestCase;
 
-public class UpdaterTest extends AndroidTestCase {
-
+public class UpdaterTest extends AndroidTestCase
+{
     protected MockWebRequest mockWebRequest;
     protected FilterEngine filterEngine;
 
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() throws Exception
+    {
         super.setUp();
 
         AppInfo appInfo = AppInfo
@@ -42,8 +43,6 @@ public class UpdaterTest extends AndroidTestCase {
         JsEngine jsEngine = new JsEngine(appInfo);
         mockWebRequest = new MockWebRequest();
         jsEngine.setWebRequest(mockWebRequest);
-
-        // TODO : use LazyFileSystem for file system
         jsEngine.setDefaultFileSystem(getContext().getFilesDir().getAbsolutePath());
 
         filterEngine = new FilterEngine(jsEngine);

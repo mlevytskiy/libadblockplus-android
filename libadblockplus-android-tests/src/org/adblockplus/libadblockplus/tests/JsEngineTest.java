@@ -25,10 +25,11 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class JsEngineTest extends BaseJsTest {
-
+public class JsEngineTest extends BaseJsTest
+{
     @Test
-    public void testEvaluate() {
+    public void testEvaluate()
+    {
         jsEngine.evaluate("function hello() { return 'Hello'; }");
         JsValue result = jsEngine.evaluate("hello()");
         assertTrue(result.isString());
@@ -36,27 +37,34 @@ public class JsEngineTest extends BaseJsTest {
     }
 
     @Test
-    public void testRuntimeExceptionIsThrown() {
-        try {
+    public void testRuntimeExceptionIsThrown()
+    {
+        try
+        {
             jsEngine.evaluate("doesnotexist()");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
     }
 
     @Test
-    public void testCompileTimeExceptionIsThrown() {
-        try {
+    public void testCompileTimeExceptionIsThrown()
+    {
+        try
+        {
             jsEngine.evaluate("'foo'bar'");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
     }
 
     @Test
-    public void testValueCreation() {
+    public void testValueCreation()
+    {
         JsValue value;
 
         final String STRING_VALUE = "foo";
@@ -77,16 +85,19 @@ public class JsEngineTest extends BaseJsTest {
 
     private boolean callbackCalled;
     private List<JsValue> callbackParams;
-    private EventCallback callback = new EventCallback() {
+    private EventCallback callback = new EventCallback()
+    {
         @Override
-        public void eventCallback(List<JsValue> params) {
+        public void eventCallback(List<JsValue> params)
+        {
             callbackCalled = true;
             callbackParams = params;
         }
     };
 
     @Test
-    public void testEventCallbacks() {
+    public void testEventCallbacks()
+    {
         callbackCalled = false;
 
         // Trigger event without a callback

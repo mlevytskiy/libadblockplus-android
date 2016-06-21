@@ -19,11 +19,12 @@ package org.adblockplus.libadblockplus;
 
 import java.util.List;
 
-public class MockWebRequest extends WebRequest {
-
+public class MockWebRequest extends WebRequest
+{
     public ServerResponse response = new ServerResponse();
 
-    public ServerResponse httpGET(String url, List<HeaderEntry> headers) {
+    public ServerResponse httpGET(String url, List<HeaderEntry> headers)
+    {
         return response;
     }
 }

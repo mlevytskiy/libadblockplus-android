@@ -23,10 +23,11 @@ import org.adblockplus.libadblockplus.ServerResponse;
 
 import org.junit.Test;
 
-public class FilterEngineUpdaterTest extends UpdaterTest {
-
+public class FilterEngineUpdaterTest extends UpdaterTest
+{
     @Test
-    public void testSetRemoveUpdateAvailableCallback() throws InterruptedException {
+    public void testSetRemoveUpdateAvailableCallback() throws InterruptedException
+    {
         mockWebRequest.response.setStatus(ServerResponse.NsStatus.OK);
         mockWebRequest.response.setResponseStatus(200);
         mockWebRequest.response.setResponse(

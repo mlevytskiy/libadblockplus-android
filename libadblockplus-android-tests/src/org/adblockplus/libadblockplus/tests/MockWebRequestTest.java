@@ -27,14 +27,19 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
-public class MockWebRequestTest extends BaseJsTest {
+public class MockWebRequestTest extends BaseJsTest
+{
 
-    private class LocalMockWebRequest extends WebRequest {
+    private class LocalMockWebRequest extends WebRequest
+    {
         @Override
-        public ServerResponse httpGET(String url, List<HeaderEntry> headers) {
-            try {
+        public ServerResponse httpGET(String url, List<HeaderEntry> headers)
+        {
+            try
+            {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException e)
+            {
                 throw new RuntimeException(e);
             }
 
@@ -52,59 +57,74 @@ public class MockWebRequestTest extends BaseJsTest {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() throws Exception
+    {
         super.setUp();
 
         jsEngine.setWebRequest(new LocalMockWebRequest());
     }
 
     @Test
-    public void testBadCall() {
-        try {
+    public void testBadCall()
+    {
+        try
+        {
             jsEngine.evaluate("_webRequest.GET()");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
 
-        try {
+        try
+        {
             jsEngine.evaluate("_webRequest.GET('', {}, function(){})");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
 
-        try {
+        try
+        {
             jsEngine.evaluate("_webRequest.GET({toString: false}, {}, function(){})");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
 
-        try {
+        try
+        {
             jsEngine.evaluate("_webRequest.GET('http://example.com/', null, function(){})");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
 
-        try {
+        try
+        {
             jsEngine.evaluate("_webRequest.GET('http://example.com/', {}, null)");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
 
-        try {
+        try
+        {
             jsEngine.evaluate("_webRequest.GET('http://example.com/', {}, function(){}, 0)");
             fail();
-        } catch (AdblockPlusException e) {
+        } catch (AdblockPlusException e)
+        {
             // ignored
         }
     }
 
     @Test
-    public void testSuccessfulRequest() throws InterruptedException {
+    public void testSuccessfulRequest() throws InterruptedException
+    {
         jsEngine.evaluate(
             "_webRequest.GET('http://example.com/', {X: 'Y'}, function(result) {foo = result;} )");
         assertTrue(jsEngine.evaluate("this.foo").isUndefined());
