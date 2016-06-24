@@ -28,7 +28,9 @@ static jlong JNICALL JniCtor(JNIEnv* env, jclass clazz, jlong jsValue)
 {
   try
   {
-    return JniPtrToLong(new AdblockPlus::SubscriptionPtr(new AdblockPlus::Subscription(JniGetJsValuePtr(jsValue))));
+    AdblockPlus::JsValue *jsValuePtr = JniGetJsValue(jsValue);
+    return JniPtrToLong(new AdblockPlus::SubscriptionPtr(new AdblockPlus::Subscription(
+      std::move(*jsValuePtr))));
   }
   CATCH_THROW_AND_RETURN(env, 0)
 }
