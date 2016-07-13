@@ -129,14 +129,18 @@ public class AndroidWebRequest extends WebRequest
         response.setStatus(NsStatus.OK);
         response.setResponse(sb.toString());
 
-        //  headers
-        if (connection.getHeaderFields().size() > 0) {
+        if (connection.getHeaderFields().size() > 0)
+        {
           List<HeaderEntry> responseHeaders = new LinkedList<HeaderEntry>();
             for (Map.Entry<String, List<String>> eachEntry :
               connection.getHeaderFields().entrySet())
+            {
               for (String eachValue : eachEntry.getValue())
+              {
                 if (eachEntry.getKey() != null && eachValue != null)
                   responseHeaders.add(new HeaderEntry(eachEntry.getKey(), eachValue));
+              }
+            }
           response.setReponseHeaders(responseHeaders);
         }
 
