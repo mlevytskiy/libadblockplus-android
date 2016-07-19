@@ -132,13 +132,14 @@ public class AndroidWebRequest extends WebRequest
         if (connection.getHeaderFields().size() > 0)
         {
           List<HeaderEntry> responseHeaders = new LinkedList<HeaderEntry>();
-            for (Map.Entry<String, List<String>> eachEntry :
-              connection.getHeaderFields().entrySet())
+            for (Map.Entry<String, List<String>> eachEntry : connection.getHeaderFields().entrySet())
             {
               for (String eachValue : eachEntry.getValue())
               {
                 if (eachEntry.getKey() != null && eachValue != null)
+                {
                   responseHeaders.add(new HeaderEntry(eachEntry.getKey(), eachValue));
+                }
               }
             }
           response.setReponseHeaders(responseHeaders);
