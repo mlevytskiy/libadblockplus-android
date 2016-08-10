@@ -1,14 +1,16 @@
 syntax: glob
 
-libadblockplus-android/ant.properties
-libadblockplus-android/local.properties
+**/ant.properties
+**/local.properties
 crowdin.yaml
-libadblockplus-android/bin
+**/bin
 libadblockplus-android/libs/armeabi*
 libadblockplus-android/libs/x86
-libadblockplus-android/obj
-libadblockplus-android/gen
-.idea
+**/obj
+**/gen
 *.iml
 upload.py
 .DS_Store
+**/build
+.*
+!.gitignore
