@@ -1,5 +1,3 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     repositories {
         mavenLocal()
@@ -7,13 +5,11 @@ buildscript {
         jcenter()
     }
     dependencies {
-        // regular gradle plugin for tests
-        classpath 'com.android.tools.build:gradle:2.1.2'
-
-        // using experimental gradle plugin because mainstream does not support NDK
+        // experimental gradle plugin for the library to compile native code with NDK
         classpath "com.android.tools.build:gradle-experimental:0.7.2"
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+
+        // regular gradle plugin for the tests
+        classpath 'com.android.tools.build:gradle:2.1.2'
     }
 }
 
