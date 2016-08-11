@@ -17,3 +17,4 @@ upload.py
 .DS_Store
 .git
 .gitignore
+**/build

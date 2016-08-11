@@ -45,9 +45,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':libadblockplus-android')
-
     androidTestCompile project(':libadblockplus-android')
-    androidTestCompile 'com.android.support.test:runner:0.4.1'
+    androidTestCompile fileTree(include: ['*.jar'], dir: 'libs')
 }
