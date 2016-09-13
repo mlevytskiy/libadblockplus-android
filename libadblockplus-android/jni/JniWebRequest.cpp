@@ -86,7 +86,7 @@ AdblockPlus::ServerResponse JniWebRequest::GET(const std::string& url,
       if (responseHeadersArray)
       {
         int itemsCount = env->GetArrayLength(responseHeadersArray) / 2;
-        for (int i=0; i<itemsCount; i++)
+        for (int i = 0; i < itemsCount; i++)
         {
           jstring jKey = (jstring)env->GetObjectArrayElement(responseHeadersArray, i * 2);
           std::string stdKey = JniJavaToStdString(*env, jKey);
