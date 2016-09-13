@@ -69,7 +69,7 @@ public class AndroidWebRequestTest extends BaseJsTest
     assertTrue(jsHeaders.isObject());
     assertEquals(
       "text/plain",
-      jsEngine.evaluate("foo.responseHeaders['Content-Type'].substr(0,10)").asString());
+      jsEngine.evaluate("foo.responseHeaders['Content-Type'].substr(0, 10)").asString());
     assertTrue(jsEngine.evaluate("foo.responseHeaders['location']").isUndefined());
   }
 
