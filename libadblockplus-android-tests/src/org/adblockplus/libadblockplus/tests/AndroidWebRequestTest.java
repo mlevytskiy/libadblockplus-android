@@ -107,7 +107,7 @@ public class AndroidWebRequestTest extends BaseJsTest
     assertEquals("[Adblock Plus ", jsEngine.evaluate("result.substr(0, 14)").asString());
     assertEquals(
       "text/plain",
-      jsEngine.evaluate("request.getResponseHeader('Content-Type').substr(0,10)").asString());
+      jsEngine.evaluate("request.getResponseHeader('Content-Type').substr(0, 10)").asString());
     assertTrue(jsEngine.evaluate("request.getResponseHeader('Location')").isNull());
   }
 }
