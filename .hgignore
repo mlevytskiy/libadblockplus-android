@@ -12,3 +12,5 @@ libadblockplus-android/gen
 *.iml
 upload.py
 .DS_Store
+.git
+.gitignore
