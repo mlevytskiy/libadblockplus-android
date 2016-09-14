@@ -15,22 +15,28 @@
  * along with Adblock Plus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JNIJSVALUE_H
-#define JNIJSVALUE_H
+#include "JniJsValue.h"
 
-#include <jni.h>
-#include <AdblockPlus/JsValue.h>
+jint JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+  JNIEnv* env;
+  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK)
+  {
+    return JNI_ERR;
+  }
 
-void JniJsValue_OnLoad(JavaVM* vm, JNIEnv* env, void* reserved);
+  JniJsValue_OnLoad(vm, env, reserved);
 
-jobject NewJniJsValue(JNIEnv* env, const AdblockPlus::JsValuePtr& jsValue, jclass jsValueClass = 0);
+  return JNI_VERSION_1_6;
+}
 
-jobject JniJsValueListToArrayList(JNIEnv* env, AdblockPlus::JsValueList& list);
+void JNI_OnUnload(JavaVM *vm, void *reserved)
+{
+  JNIEnv* env;
+  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK)
+  {
+    return;
+  }
 
-AdblockPlus::JsValue* JniGetJsValue(jlong ptr);
-
-AdblockPlus::JsValuePtr& JniGetJsValuePtr(jlong ptr);
-
-void JniJsValue_OnUnload(JavaVM *vm, JNIEnv *env, void *reserved);
-
-#endif /* JNIJSVALUE_H */
+  JniJsValue_OnUnload(vm, env, reserved);
+}

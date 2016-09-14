@@ -23,21 +23,13 @@
 jclass globalJsValueClass;
 jmethodID jsValueClassCtor;
 
-jint JNI_OnLoad(JavaVM* vm, void* reserved)
+void JniJsValue_OnLoad(JavaVM* vm, JNIEnv* env, void* reserved)
 {
-  JNIEnv* env;
-  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK)
-  {
-    return JNI_ERR;
-  }
-
   // precache for performance and avoid attaching threads
   jclass localJsValueClass = env->FindClass(PKG("JsValue"));
   globalJsValueClass = (jclass)env->NewGlobalRef(localJsValueClass);
   jsValueClassCtor = env->GetMethodID(globalJsValueClass, "<init>", "(J)V");
   env->DeleteLocalRef(localJsValueClass);
-
-  return JNI_VERSION_1_6;
 }
 
 static jboolean JNICALL JniIsUndefined(JNIEnv* env, jclass clazz, jlong ptr)
@@ -232,14 +224,8 @@ extern "C" JNIEXPORT void JNICALL Java_org_adblockplus_libadblockplus_JsValue_re
   env->RegisterNatives(clazz, methods, sizeof(methods) / sizeof(methods[0]));
 }
 
-void JNI_OnUnload(JavaVM *vm, void *reserved)
+void JniJsValue_OnUnload(JavaVM *vm, JNIEnv *env, void *reserved)
 {
-  JNIEnv* env;
-  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK)
-  {
-    return;
-  }
-
   if (globalJsValueClass)
   {
     env->DeleteGlobalRef(globalJsValueClass);
