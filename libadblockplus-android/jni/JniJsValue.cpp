@@ -32,6 +32,14 @@ void JniJsValue_OnLoad(JavaVM* vm, JNIEnv* env, void* reserved)
   env->DeleteLocalRef(localJsValueClass);
 }
 
+void JniJsValue_OnUnload(JavaVM* vm, JNIEnv* env, void* reserved)
+{
+  if (globalJsValueClass)
+  {
+    env->DeleteGlobalRef(globalJsValueClass);
+  }
+}
+
 static jboolean JNICALL JniIsUndefined(JNIEnv* env, jclass clazz, jlong ptr)
 {
   try
@@ -222,12 +230,4 @@ static JNINativeMethod methods[] =
 extern "C" JNIEXPORT void JNICALL Java_org_adblockplus_libadblockplus_JsValue_registerNatives(JNIEnv *env, jclass clazz)
 {
   env->RegisterNatives(clazz, methods, sizeof(methods) / sizeof(methods[0]));
-}
-
-void JniJsValue_OnUnload(JavaVM *vm, JNIEnv *env, void *reserved)
-{
-  if (globalJsValueClass)
-  {
-    env->DeleteGlobalRef(globalJsValueClass);
-  }
 }

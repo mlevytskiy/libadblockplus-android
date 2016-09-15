@@ -17,23 +17,25 @@
 
 #include "JniJsValue.h"
 
+#define JNI_REQUIRED_VERSION (JNI_VERSION_1_6)
+
 jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
   JNIEnv* env;
-  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK)
+  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_REQUIRED_VERSION) != JNI_OK)
   {
     return JNI_ERR;
   }
 
   JniJsValue_OnLoad(vm, env, reserved);
 
-  return JNI_VERSION_1_6;
+  return JNI_REQUIRED_VERSION;
 }
 
-void JNI_OnUnload(JavaVM *vm, void *reserved)
+void JNI_OnUnload(JavaVM* vm, void* reserved)
 {
   JNIEnv* env;
-  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK)
+  if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_REQUIRED_VERSION) != JNI_OK)
   {
     return;
   }
