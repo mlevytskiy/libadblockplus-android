@@ -40,7 +40,7 @@ public class AndroidWebRequestTest extends BaseJsTest
     // should get the actual filter list back.
     jsEngine.evaluate(
       "_webRequest.GET('https://easylist-downloads.adblockplus.org/easylist.txt', {}, " +
-        "function(result) {foo = result;} )");
+      "function(result) {foo = result;} )");
     do
     {
       try
@@ -68,7 +68,7 @@ public class AndroidWebRequestTest extends BaseJsTest
     assertTrue(jsHeaders.isObject());
     assertEquals(
       "text/plain",
-      jsEngine.evaluate("foo.responseHeaders['Content-Type'].substr(0,10)").asString());
+      jsEngine.evaluate("foo.responseHeaders['content-type'].substr(0, 10)").asString());
     assertTrue(jsEngine.evaluate("foo.responseHeaders['location']").isUndefined());
   }
 
@@ -105,7 +105,7 @@ public class AndroidWebRequestTest extends BaseJsTest
     assertEquals("[Adblock Plus ", jsEngine.evaluate("result.substr(0, 14)").asString());
     assertEquals(
       "text/plain",
-      jsEngine.evaluate("request.getResponseHeader('Content-Type').substr(0,10)").asString());
+      jsEngine.evaluate("request.getResponseHeader('Content-Type').substr(0, 10)").asString());
     assertTrue(jsEngine.evaluate("request.getResponseHeader('Location')").isNull());
   }
 }
