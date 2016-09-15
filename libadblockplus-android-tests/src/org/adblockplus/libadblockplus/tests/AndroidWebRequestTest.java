@@ -18,6 +18,7 @@
 package org.adblockplus.libadblockplus.tests;
 
 import org.adblockplus.android.AndroidWebRequest;
+import org.adblockplus.libadblockplus.FilterEngine;
 import org.adblockplus.libadblockplus.JsValue;
 import org.adblockplus.libadblockplus.ServerResponse;
 
@@ -75,6 +76,10 @@ public class AndroidWebRequestTest extends BaseJsTest
   @Test
   public void testXMLHttpRequest()
   {
+    // creating not used anywhere FilterEngine object is not as useless as it seems:
+    // it loads compat.js JsEngine to add XMLHttpRequest class support
+    new FilterEngine(jsEngine);
+
     jsEngine.evaluate(
       "var result;\n" +
       "var request = new XMLHttpRequest();\n" +
