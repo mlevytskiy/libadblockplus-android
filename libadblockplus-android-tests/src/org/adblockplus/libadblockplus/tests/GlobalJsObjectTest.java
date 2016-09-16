@@ -53,56 +53,15 @@ public class GlobalJsObjectTest extends BaseJsTest
     {
       // ignored
     }
-  @Test
-    public void testSetTimeout() throws InterruptedException
+
+    try
     {
-        jsEngine.evaluate("setTimeout(function() {foo = 'bar';}, 100)");
-        assertTrue(jsEngine.evaluate("this.foo").isUndefined());
-        Thread.sleep(200);
-        assertEquals("bar", jsEngine.evaluate("this.foo").asString());
+      jsEngine.evaluate("setTimeout('', 1)");
+      fail();
     }
-
-    @Test
-    public void testSetTimeoutWithArgs() throws InterruptedException
+    catch (AdblockPlusException e)
     {
-        jsEngine.evaluate("setTimeout(function(s) {foo = s;}, 100, 'foobar')");
-        assertTrue(jsEngine.evaluate("this.foo").isUndefined());
-        Thread.sleep(200);
-        assertEquals("foobar", jsEngine.evaluate("this.foo").asString());
-    }
-
-    @Test
-    public void testSetTimeoutWithInvalidArgs()
-    {
-        try
-        {
-            jsEngine.evaluate("setTimeout()");
-            fail();
-        }
-        catch (AdblockPlusException e)
-        {
-            // ignored
-        }
-
-        try
-        {
-            jsEngine.evaluate("setTimeout('', 1)");
-            fail();
-        }
-        catch (AdblockPlusException e)
-        {
-            // ignored
-        }
-    }
-
-    @Test
-    public void testSetMultipleTimeouts() throws InterruptedException
-    {
-        jsEngine.evaluate("foo = []");
-        jsEngine.evaluate("setTimeout(function(s) {foo.push('1');}, 100)");
-        jsEngine.evaluate("setTimeout(function(s) {foo.push('2');}, 150)");
-        Thread.sleep(200);
-        assertEquals("1,2", jsEngine.evaluate("this.foo").asString());
+      // ignored
     }
   }
 
