@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 
 import org.adblockplus.libadblockplus.JsValue;
 import org.adblockplus.libadblockplus.Subscription;
-import org.apache.commons.lang.StringUtils;
 
 import android.app.Notification;
 import android.app.NotificationManager;
