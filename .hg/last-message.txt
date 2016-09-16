@@ -1,8 +1,0 @@
-Issue 4030 - Move JNI bindings into separate library project
-
-* created root-level 'libadblockplus-android' directory (keeping in mind upcoming tests for the library)
-* moved library classes
-* stripped Utils class
-* moved AndroidWebRequest class to the libray too (it's the only WebRequest implementation)
-+ added Maven module description
-* modified README
