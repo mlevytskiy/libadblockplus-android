@@ -18,3 +18,4 @@ upload.py
 .git
 .gitignore
 **/build
+.gradle
