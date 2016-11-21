@@ -75,7 +75,7 @@ In the project root directory run:
 
     ./gradlew assembleDebug
 
-This will generate *.aar library artifact in 'libadblockplus-android/build/outputs/aar/' directory.
+This will generate *.aar library artifact in the 'libadblockplus-android/build/outputs/aar/' directory.
 
 ## Library tests
 
@@ -122,14 +122,14 @@ For example:
 
 ### Building with Gradle/Android Studio
 
-Make sure you've created _local.properties_ file to build the library (see above).
+Make sure you've created the _local.properties_ file to build the library (see above).
 In the project root directory run:
 
     ./gradlew assembleDebugAndroidTest
 
-This will generate *.apk in 'libadblockplus-android-tests/build/outputs/apk/' directory.
+This will generate *.apk in the 'libadblockplus-android-tests/build/outputs/apk/' directory.
 
 ### Testing with Gradle/Android Studio
 
 You can select test class/method and click 'Run ..Test'. The library and test app will be
-compiled, installed to emuator/device and launched automatically.
+compiled, installed to emulator/device and launched automatically.
