@@ -85,7 +85,7 @@ AdblockPlus::ServerResponse JniWebRequest::GET(const std::string& url,
     for (AdblockPlus::HeaderList::const_iterator it = requestHeaders.begin(),
         end = requestHeaders.end(); it != end; it++)
     {
-      JniLocalReference<jobject> headerEntry(*env, NewHeaderEntry(*env, it->first, it->second));
+      JniLocalReference<jobject> headerEntry(*env, NewTuple(*env, it->first, it->second));
       JniAddObjectToList(*env, *arrayList, addMethod, *headerEntry);
     }
 
@@ -136,7 +136,7 @@ AdblockPlus::ServerResponse JniWebRequest::GET(const std::string& url,
   return sResponse;
 }
 
-jobject JniWebRequest::NewHeaderEntry(JNIEnv* env, const std::string& a,
+jobject JniWebRequest::NewTuple(JNIEnv* env, const std::string& a,
     const std::string& b) const
 {
   jmethodID factory = env->GetMethodID(headerEntryClass->Get(), "<init>",

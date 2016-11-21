@@ -98,7 +98,7 @@ public:
   AdblockPlus::ServerResponse GET(const std::string& url, const AdblockPlus::HeaderList& requestHeaders) const;
 
 private:
-  jobject NewHeaderEntry(JNIEnv* env, const std::string& a, const std::string& b) const;
+  jobject NewTuple(JNIEnv* env, const std::string& a, const std::string& b) const;
 };
 
 #endif /* JNICALLBACKS_H */
