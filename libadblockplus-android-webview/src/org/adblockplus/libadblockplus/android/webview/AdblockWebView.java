@@ -84,7 +84,6 @@ public class AdblockWebView extends WebView
   private static final String HIDE_TOKEN = "{{HIDE}}";
   private static final String BRIDGE = "jsBridge";
   private static final String[] EMPTY_ARRAY = {};
-  private static final String EMPTY_ELEMHIDE_ARRAY_STRING = "[]";
 
   private static final Pattern RE_JS = Pattern.compile("\\.js$", Pattern.CASE_INSENSITIVE);
   private static final Pattern RE_CSS = Pattern.compile("\\.css$", Pattern.CASE_INSENSITIVE);
@@ -107,7 +106,7 @@ public class AdblockWebView extends WebView
   private String domain;
   private String injectJs;
   private CountDownLatch elemHideLatch;
-  private String elemHideSelectorsString;
+  private List<String> elemHideSelectors;
   private Object elemHideThreadLockObject = new Object();
   private ElemHideThread elemHideThread;
   private boolean loading;
@@ -962,7 +961,7 @@ public class AdblockWebView extends WebView
 
   private class ElemHideThread extends Thread
   {
-    private String selectorsString;
+    private List<String> selectors;
     private CountDownLatch finishedLatch;
     private AtomicBoolean isCancelled;
 
@@ -980,7 +979,7 @@ public class AdblockWebView extends WebView
         if (adblockEngine == null)
         {
           w("FilterEngine already disposed");
-          selectorsString = EMPTY_ELEMHIDE_ARRAY_STRING;
+          selectors = null;
         }
         else
         {
@@ -1000,16 +999,15 @@ public class AdblockWebView extends WebView
           }
 
           d("Requesting elemhide selectors from AdblockEngine for " + url + " in " + this);
-          List<String> selectors = adblockEngine.getElementHidingSelectors(url, domain, referrers);
+          selectors = adblockEngine.getElementHidingSelectors(url, domain, referrers);
           d("Finished requesting elemhide selectors, got " + selectors.size() + " in " + this);
-          selectorsString = Utils.stringListToJsonArray(selectors);
         }
       }
       finally
       {
         if (!isCancelled.get())
         {
-          finish(selectorsString);
+          finish(selectors);
         }
         else
         {
@@ -1030,10 +1028,10 @@ public class AdblockWebView extends WebView
       }
     }
 
-    private void finish(String result)
+    private void finish(List<String> result)
     {
-      d("Setting elemhide string " + result.length() + " bytes");
-      elemHideSelectorsString = result;
+      d("Setting elemhide selectors: " + (result != null ? result.size() : 0) + " items");
+      elemHideSelectors = result;
       onFinished();
     }
 
@@ -1053,7 +1051,7 @@ public class AdblockWebView extends WebView
       w("Cancelling elemhide thread " + this);
       isCancelled.set(true);
 
-      finish(EMPTY_ELEMHIDE_ARRAY_STRING);
+      finish(null);
     }
   }
 
@@ -1329,31 +1327,46 @@ public class AdblockWebView extends WebView
 
   // warning: do not rename (used in injected JS by method name)
   @JavascriptInterface
-  public String getElemhideSelectors()
+  public void startGetElemhideSelectors()
   {
-    if (elemHideLatch == null)
+    if (elemHideLatch != null)
     {
-      return EMPTY_ELEMHIDE_ARRAY_STRING;
-    }
-    else
-    {
+      // elemhide selectors list getting is started in startAbpLoad() in background thread
+      d("Waiting for elemhide selectors to be ready");
       try
       {
-        // elemhide selectors list getting is started in startAbpLoad() in background thread
-        d("Waiting for elemhide selectors to be ready");
         elemHideLatch.await();
-        d("Elemhide selectors ready, " + elemHideSelectorsString.length() + " bytes");
-
-        clearReferrers();
-
-        return elemHideSelectorsString;
       }
       catch (InterruptedException e)
       {
         w("Interrupted, returning empty selectors list");
-        return EMPTY_ELEMHIDE_ARRAY_STRING;
       }
     }
+
+    d("Elemhide selectors ready, " + getElemhideSelectorsCount() + " items");
+  }
+
+  // warning: do not rename (used in injected JS by method name)
+  @JavascriptInterface
+  public int getElemhideSelectorsCount()
+  {
+    return elemHideSelectors != null ? elemHideSelectors.size() : 0;
+
+  }
+
+  // warning: do not rename (used in injected JS by method name)
+  @JavascriptInterface
+  public String getElemhideSelector(int index)
+  {
+    return elemHideSelectors != null ? elemHideSelectors.get(index) : null;
+  }
+
+  // warning: do not rename (used in injected JS by method name)
+  @JavascriptInterface
+  public void finishGetElemhideSelectors()
+  {
+    d("Finished getting elemhide selectors");
+    clearReferrers();
   }
 
   private void doDispose()

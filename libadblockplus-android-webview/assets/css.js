@@ -1,21 +1,27 @@
 {
    {{DEBUG}} console.log('starting injecting css rules');
-   var selectors = JSON.parse({{BRIDGE}}.getElemhideSelectors());
-   {{DEBUG}} console.log('parsed selectors: ' + selectors.length);
+   {{BRIDGE}}.startGetElemhideSelectors();
+   var selectorsCount = {{BRIDGE}}.getElemhideSelectorsCount();
+   {{DEBUG}} console.log('got selectors: ' + selectorsCount);
    var head = document.getElementsByTagName("head")[0];
    var style = document.createElement("style");
    head.appendChild(style);
    var sheet = style.sheet ? style.sheet : style.styleSheet;
-   for (var i=0; i<selectors.length; i++)
+   for (var i = 0; i < selectorsCount; i++)
    {
-     if (sheet.insertRule)
+     var selector = {{BRIDGE}}.getElemhideSelector(i);
+     if (selector != undefined)
      {
-       sheet.insertRule(selectors[i] + ' { display: none !important; }', 0);
-     }
-     else
-     {
-       sheet.addRule(selectors[i], 'display: none !important;', 0);
+       if (sheet.insertRule)
+       {
+         sheet.insertRule(selector + ' { display: none !important; }', 0);
+       }
+       else
+       {
+         sheet.addRule(selector, 'display: none !important;', 0);
+       }
      }
    }
+   {{BRIDGE}}.finishGetElemhideSelectors();
    {{DEBUG}} console.log('finished injecting css rules');
 }
