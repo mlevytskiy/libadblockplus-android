@@ -17,9 +17,6 @@
 
 package org.adblockplus.libadblockplus.android.webviewapp;
 
-import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,6 +30,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
+import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
+
 public class MainActivity extends Activity
 {
   public static final boolean DEVELOPMENT_BUILD = true;
@@ -41,7 +41,7 @@ public class MainActivity extends Activity
   public static final boolean USE_EXTERNAL_ADBLOCKENGINE = true;
 
   // adblock retain() may be long-running, pass `true` to do it in background thread
-  public static final boolean ADBLOCKENGINE_RETAIN_ASYNC = true;
+  public static final boolean ADBLOCKENGINE_RETAIN_ASYNC = false;
 
   private ProgressBar progress;
   private EditText url;
@@ -109,11 +109,9 @@ public class MainActivity extends Activity
     forward.setEnabled(webView.canGoForward());
   }
 
-  private WebChromeClient webChromeClient = new WebChromeClient()
-  {
+  private WebChromeClient webChromeClient = new WebChromeClient() {
     @Override
-    public void onProgressChanged(WebView view, int newProgress)
-    {
+    public void onProgressChanged(WebView view, int newProgress) {
       progress.setProgress(newProgress);
     }
   };
@@ -172,11 +170,11 @@ public class MainActivity extends Activity
     setProgressVisible(false);
     updateButtons();
 
-    // to get debug/warning log output
-    webView.setDebugMode(DEVELOPMENT_BUILD);
-
-    // render as fast as we can
-    webView.setAllowDrawDelay(0);
+//    // to get debug/warning log output
+//    webView.setDebugMode(DEVELOPMENT_BUILD);
+//
+//    // render as fast as we can
+//    webView.setAllowDrawDelay(0);
 
     // to show that external WebViewClient is still working
     webView.setWebViewClient(webViewClient);
@@ -249,7 +247,7 @@ public class MainActivity extends Activity
     if (USE_EXTERNAL_ADBLOCKENGINE && ADBLOCKENGINE_RETAIN_ASYNC)
     {
       AdblockHelper.get().waitForReady();
-      webView.setAdblockEngine(AdblockHelper.get().getEngine());
+//      webView.setAdblockEngine(AdblockHelper.get().getEngine());
     }
     webView.loadUrl(prepareUrl(url.getText().toString()));
   }
@@ -257,17 +255,17 @@ public class MainActivity extends Activity
   @Override
   protected void onDestroy()
   {
-    webView.dispose(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        if (USE_EXTERNAL_ADBLOCKENGINE)
-        {
-          AdblockHelper.get().release();
-        }
-      }
-    });
+//    webView.dispose(new Runnable()
+//    {
+//      @Override
+//      public void run()
+//      {
+//        if (USE_EXTERNAL_ADBLOCKENGINE)
+//        {
+//          AdblockHelper.get().release();
+//        }
+//      }
+//    });
 
     super.onDestroy();
   }

@@ -23,6 +23,8 @@ include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+
 LOCAL_MODULE := libadblockplus-jni
 LOCAL_SRC_FILES := JniLibrary.cpp
 LOCAL_SRC_FILES += JniJsEngine.cpp JniFilterEngine.cpp JniJsValue.cpp

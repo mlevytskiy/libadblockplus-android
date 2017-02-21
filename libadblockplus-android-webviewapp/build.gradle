@@ -13,13 +13,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "24.0.1"
+    compileSdkVersion 24
+    buildToolsVersion '25.0.1'
 
     defaultConfig {
         applicationId "org.adblockplus.libadblockplus.android.webviewapp"
         minSdkVersion 21
-        targetSdkVersion 21
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
     }
@@ -38,6 +38,21 @@ android {
             }
         }
     }
+
+//    signingConfigs {
+//        debug {
+//            storeFile file("keystores/debug/debug.keystore")
+//            keyAlias 'androiddebugkey'
+//            keyPassword 'android'
+//            storePassword 'android'
+//        }
+//        release {
+//            storeFile file("keystores/release/jalepino.keystore")
+//            keyAlias 'jalepino'
+//            keyPassword 'JaLePiNo'
+//            storePassword 'JaLePiNo'
+//        }
+//    }
 }
 
 
