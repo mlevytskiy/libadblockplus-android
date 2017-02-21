@@ -19,14 +19,15 @@ package org.adblockplus.libadblockplus.android.webviewapp;
 
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
 
-public class Application extends android.app.Application
-{
-  @Override
-  public void onCreate()
-  {
-    super.onCreate();
+public class Application extends android.app.Application {
 
-    // init Adblock
+  public static Application instance;
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    instance = this;
     AdblockHelper.get().init(this, true, AdblockHelper.PREFERENCE_NAME);
   }
+
 }

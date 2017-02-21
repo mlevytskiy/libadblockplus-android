@@ -8,10 +8,14 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import org.adblockplus.libadblockplus.FilterEngine;
 import org.adblockplus.libadblockplus.android.AdblockEngine;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+
+import static org.adblockplus.libadblockplus.android.webview.AdblockType.SIMPLE_DOMAIN_LIST;
 
 /**
  * Created by max on 20.02.17.
@@ -19,7 +23,12 @@ import java.util.Map;
 
 public class AdblockWebView2 extends WebView {
 
+    private static final Pattern RE_IMAGE = Pattern.compile("\\.(?:gif|png|jpe?g|bmp|ico)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RE_FONT = Pattern.compile("\\.(?:ttf|woff)$", Pattern.CASE_INSENSITIVE);
+
     private AdBlocker adBlocker;
+    private AdblockType adblockType = SIMPLE_DOMAIN_LIST;
+    private AdblockEngine adblockEngine;
 
     public AdblockWebView2(Context context) {
         super(context);
@@ -91,9 +100,8 @@ public class AdblockWebView2 extends WebView {
                 boolean result;
                 if (!loadedUrls.containsKey(url)) {
                     long time1 = System.nanoTime();
-                    result = adBlocker.isAd(url);
+                    result = filter(view, url, adblockType, loadedUrls);
                     times1.put(url, System.nanoTime() - time1);
-                    loadedUrls.put(url, result);
                 } else {
                     result = loadedUrls.get(url);
                 }
@@ -106,7 +114,45 @@ public class AdblockWebView2 extends WebView {
         super.setWebViewClient(newWebViewClient);
     }
 
-    public void setAdblockEngine(final AdblockEngine adblockEngine) {
+    private boolean filter(WebView view, String url, AdblockType type, Map<String, Boolean> loadedUrls) {
+        boolean result;
+        if (!loadedUrls.containsKey(url)) {
+            if (type == SIMPLE_DOMAIN_LIST) {
+                result = adBlocker.isAd(url);
+            } else {
+                FilterEngine.ContentType contentType = getContentType(url);
+                result = adblockEngine.matches(url, contentType, new String[]{} );
+            }
+            loadedUrls.put(url, result);
+        } else {
+            result = loadedUrls.get(url);
+        }
+        return result;
+    }
+
+    private FilterEngine.ContentType getContentType(String url) {
+        if (url.lastIndexOf(".css") != -1) {
+            return FilterEngine.ContentType.STYLESHEET;
+        } else if (url.lastIndexOf(".js") != -1) {
+            return FilterEngine.ContentType.SCRIPT;
+        } else if (url.lastIndexOf(".html") != -1) {
+            return FilterEngine.ContentType.SUBDOCUMENT;
+        } else if (RE_IMAGE.matcher(url).find()) {
+            return FilterEngine.ContentType.IMAGE;
+        } else if (RE_FONT.matcher(url).find()) {
+            return FilterEngine.ContentType.FONT;
+        } else {
+            return FilterEngine.ContentType.OTHER;
+        }
 
     }
+
+    public void setAdblockEngine(final AdblockEngine adblockEngine) {
+        this.adblockEngine = adblockEngine;
+    }
+
+    public void chooseAblockType(AdblockType type) {
+        adblockType = type;
+    }
+
 }

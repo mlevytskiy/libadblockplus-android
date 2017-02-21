@@ -34,6 +34,7 @@
             android:name=".SettingsActivity"
             android:label="@string/settings_name"
             android:theme="@android:style/Theme.DeviceDefault.Light"/>
+
     </application>
 
 </manifest>

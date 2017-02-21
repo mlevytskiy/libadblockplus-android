@@ -18,157 +18,196 @@
 package org.adblockplus.libadblockplus.android.webviewapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.Toast;
 
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
+import org.adblockplus.libadblockplus.android.webview.AdblockType;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
-public class MainActivity extends Activity
-{
-  public static final boolean DEVELOPMENT_BUILD = true;
+public class MainActivity extends Activity {
+    public static final boolean DEVELOPMENT_BUILD = true;
 
-  // webView can create AdblockEngine instance itself if not passed with `webView.setAdblockEngine()`
-  public static final boolean USE_EXTERNAL_ADBLOCKENGINE = true;
+    // webView can create AdblockEngine instance itself if not passed with `webView.setAdblockEngine()`
+    public static final boolean USE_EXTERNAL_ADBLOCKENGINE = true;
 
-  // adblock retain() may be long-running, pass `true` to do it in background thread
-  public static final boolean ADBLOCKENGINE_RETAIN_ASYNC = false;
+    // adblock retain() may be long-running, pass `true` to do it in background thread
+    public static final boolean ADBLOCKENGINE_RETAIN_ASYNC = false;
 
-  private ProgressBar progress;
-  private EditText url;
-  private Button ok;
-  private Button back;
-  private Button forward;
-  private Button settings;
+    private ProgressBar progress;
+    private EditText url;
+    private Button ok;
+    private Button back;
+    private Button forward;
+    private Button settings;
 
-  private AdblockWebView webView;
+    private AdblockWebView webView;
+    private AlertDialog dialog;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState)
-  {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-
-    bindControls();
-    initControls();
-  }
-
-  private void bindControls()
-  {
-    url = (EditText) findViewById(R.id.main_url);
-    ok = (Button) findViewById(R.id.main_ok);
-    back = (Button) findViewById(R.id.main_back);
-    forward = (Button) findViewById(R.id.main_forward);
-    settings = (Button) findViewById(R.id.main_settings);
-    progress = (ProgressBar) findViewById(R.id.main_progress);
-    webView = (AdblockWebView) findViewById(R.id.main_webview);
-  }
-
-  private void setProgressVisible(boolean visible)
-  {
-    progress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
-  }
-
-  private WebViewClient webViewClient = new WebViewClient()
-  {
-    @Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon)
-    {
-      setProgressVisible(true);
-
-      // show updated URL (because of possible redirection)
-      MainActivity.this.url.setText(url);
-    }
+    private RadioButton simpleDomainListRB;
+    private RadioButton easyListRB;
 
     @Override
-    public void onPageFinished(WebView view, String url)
-    {
-      setProgressVisible(false);
-      updateButtons();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        bindControls();
+        initControls();
+
+        loadAdblockType();
     }
 
-    @Override
-    public void onReceivedError(WebView view, int errorCode, String description, String failingUrl)
-    {
-      updateButtons();
+    private void bindControls() {
+        url = (EditText) findViewById(R.id.main_url);
+        ok = (Button) findViewById(R.id.main_ok);
+        back = (Button) findViewById(R.id.main_back);
+        forward = (Button) findViewById(R.id.main_forward);
+        settings = (Button) findViewById(R.id.main_settings);
+        progress = (ProgressBar) findViewById(R.id.main_progress);
+        webView = (AdblockWebView) findViewById(R.id.main_webview);
+        simpleDomainListRB = (RadioButton) findViewById(R.id.radioButtonSimpleDomainList);
+
+        simpleDomainListRB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    webView.setAblockType(AdblockType.SIMPLE_DOMAIN_LIST);
+                    saveAdblockType(AdblockType.SIMPLE_DOMAIN_LIST);
+                }
+            }
+        });
+
+        easyListRB = (RadioButton) findViewById(R.id.radioButtonEasyList);
+        easyListRB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    webView.setAblockType(AdblockType.EASY_LIST_NATIVE_CODE);
+                    saveAdblockType(AdblockType.EASY_LIST_NATIVE_CODE);
+                }
+            }
+        });
     }
-  };
 
-  private void updateButtons()
-  {
-    back.setEnabled(webView.canGoBack());
-    forward.setEnabled(webView.canGoForward());
-  }
-
-  private WebChromeClient webChromeClient = new WebChromeClient() {
-    @Override
-    public void onProgressChanged(WebView view, int newProgress) {
-      progress.setProgress(newProgress);
+    private void saveAdblockType(AdblockType type) {
+        MemoryCommunicator.getInstance().saveStr(type.name(), Key.ADBLOCK_TYPE);
     }
-  };
 
-  private void initControls()
-  {
-    ok.setOnClickListener(new View.OnClickListener()
-    {
-      @Override
-      public void onClick(View view)
-      {
-        loadUrl();
-      }
-    });
-
-    back.setOnClickListener(new View.OnClickListener()
-    {
-      @Override
-      public void onClick(View v)
-      {
-        loadPrev();
-      }
-    });
-
-    forward.setOnClickListener(new View.OnClickListener()
-    {
-      @Override
-      public void onClick(View v)
-      {
-        loadForward();
-      }
-    });
-
-    if (USE_EXTERNAL_ADBLOCKENGINE)
-    {
-      settings.setOnClickListener(new View.OnClickListener()
-      {
-        @Override
-        public void onClick(View v)
-        {
-          navigateSettings();
+    private void loadAdblockType() {
+        String str = MemoryCommunicator.getInstance().loadStr(Key.ADBLOCK_TYPE);
+        if (TextUtils.isEmpty(str)) {
+            setAdblockTypeOnUI(AdblockWebView.DEFAULT_ADBLOCK_TYPE);
+        } else {
+            setAdblockTypeOnUI(AdblockType.valueOf(str));
         }
-      });
     }
-    else
-    {
+
+    private void setAdblockTypeOnUI(AdblockType type) {
+        webView.setAblockType(type);
+        if (type == AdblockType.EASY_LIST_NATIVE_CODE) {
+            easyListRB.toggle();
+        } else {
+            simpleDomainListRB.toggle();
+        }
+    }
+
+    private void setProgressVisible(boolean visible) {
+        progress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private WebViewClient webViewClient = new WebViewClient() {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            setProgressVisible(true);
+
+            // show updated URL (because of possible redirection)
+            MainActivity.this.url.setText(url);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            setProgressVisible(false);
+            updateButtons();
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            updateButtons();
+        }
+    };
+
+    private void updateButtons() {
+        back.setEnabled(webView.canGoBack());
+        forward.setEnabled(webView.canGoForward());
+    }
+
+    private WebChromeClient webChromeClient = new WebChromeClient() {
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            progress.setProgress(newProgress);
+        }
+    };
+
+    private void initControls() {
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadUrl();
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadPrev();
+            }
+        });
+
+        forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadForward();
+            }
+        });
+
+        if (USE_EXTERNAL_ADBLOCKENGINE) {
+            settings.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    navigateSettings();
+                }
+            });
+        } else {
       /*
       We're able to show settings if we're using AdblockHelper facade only.
       Otherwise pass AdblockEngine instance to the fragments and not it's neither Serializable nor Parcelable.
        */
-      settings.setVisibility(View.GONE);
-    }
+            settings.setVisibility(View.GONE);
+        }
 
-    initAdblockWebView();
+        initAdblockWebView();
 
-    setProgressVisible(false);
-    updateButtons();
+        setProgressVisible(false);
+        updateButtons();
 
 //    // to get debug/warning log output
 //    webView.setDebugMode(DEVELOPMENT_BUILD);
@@ -176,85 +215,72 @@ public class MainActivity extends Activity
 //    // render as fast as we can
 //    webView.setAllowDrawDelay(0);
 
-    // to show that external WebViewClient is still working
-    webView.setWebViewClient(webViewClient);
+        // to show that external WebViewClient is still working
+        webView.setWebViewClient(webViewClient);
 
-    // to show that external WebChromeClient is still working
-    webView.setWebChromeClient(webChromeClient);
-  }
+        // to show that external WebChromeClient is still working
+        webView.setWebChromeClient(webChromeClient);
 
-  private void navigateSettings()
-  {
-    startActivity(new Intent(this, SettingsActivity.class));
-  }
-
-  private void initAdblockWebView()
-  {
-    if (USE_EXTERNAL_ADBLOCKENGINE)
-    {
-      // external adblockEngine
-      AdblockHelper.get().retain(ADBLOCKENGINE_RETAIN_ASYNC);
-
-      if (!ADBLOCKENGINE_RETAIN_ASYNC)
-      {
-        webView.setAdblockEngine(AdblockHelper.get().getEngine());
-      }
+        webView.setAblockType(AdblockType.SIMPLE_DOMAIN_LIST);
     }
-    else
-    {
-      // AdblockWebView will create internal AdblockEngine instance
+
+    private void navigateSettings() {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
-  }
 
-  private void hideSoftwareKeyboard()
-  {
-    InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-    imm.hideSoftInputFromWindow(url.getWindowToken(), 0);
-  }
+    private void initAdblockWebView() {
+        if (USE_EXTERNAL_ADBLOCKENGINE) {
+            // external adblockEngine
+            AdblockHelper.get().retain(ADBLOCKENGINE_RETAIN_ASYNC);
 
-  private void loadPrev()
-  {
-    hideSoftwareKeyboard();
-    if (webView.canGoBack())
-    {
-      webView.goBack();
+            if (!ADBLOCKENGINE_RETAIN_ASYNC) {
+                webView.setAdblockEngine(AdblockHelper.get().getEngine());
+            }
+        } else {
+            // AdblockWebView will create internal AdblockEngine instance
+        }
     }
-  }
 
-  private void loadForward()
-  {
-    hideSoftwareKeyboard();
-    if (webView.canGoForward())
-    {
-      webView.goForward();
+    private void hideSoftwareKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(url.getWindowToken(), 0);
     }
-  }
 
-  private String prepareUrl(String url)
-  {
-    if (!url.startsWith("http"))
-      url = "http://" + url;
+    private void loadPrev() {
+        hideSoftwareKeyboard();
+        if (webView.canGoBack()) {
+            webView.goBack();
+        }
+    }
 
-    // make sure url is valid URL
-    return url;
-  }
+    private void loadForward() {
+        hideSoftwareKeyboard();
+        if (webView.canGoForward()) {
+            webView.goForward();
+        }
+    }
 
-  private void loadUrl()
-  {
-    hideSoftwareKeyboard();
+    private String prepareUrl(String url) {
+        if (!url.startsWith("http"))
+            url = "http://" + url;
 
-    // if retained with `true` we need to make sure it's ready now
-    if (USE_EXTERNAL_ADBLOCKENGINE && ADBLOCKENGINE_RETAIN_ASYNC)
-    {
-      AdblockHelper.get().waitForReady();
+        // make sure url is valid URL
+        return url;
+    }
+
+    private void loadUrl() {
+        hideSoftwareKeyboard();
+
+        // if retained with `true` we need to make sure it's ready now
+        if (USE_EXTERNAL_ADBLOCKENGINE && ADBLOCKENGINE_RETAIN_ASYNC) {
+            AdblockHelper.get().waitForReady();
 //      webView.setAdblockEngine(AdblockHelper.get().getEngine());
+        }
+        webView.loadUrl(prepareUrl(url.getText().toString()));
     }
-    webView.loadUrl(prepareUrl(url.getText().toString()));
-  }
 
-  @Override
-  protected void onDestroy()
-  {
+    @Override
+    protected void onDestroy() {
 //    webView.dispose(new Runnable()
 //    {
 //      @Override
@@ -267,6 +293,52 @@ public class MainActivity extends Activity
 //      }
 //    });
 
-    super.onDestroy();
-  }
+        super.onDestroy();
+    }
+
+    public void onClickChooseUrl(View view) {
+        showChooseDialog();
+    }
+
+    public void onClickInfo(View view) {
+        Toast.makeText(this, "info", Toast.LENGTH_LONG).show();
+    }
+
+    private void showChooseDialog() {
+        String names[] = {"ynet.co.il","walla.co.il","calcalist.co.il","kinogo.club"};
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View convertView = (View) inflater.inflate(R.layout.list, null);
+        alertDialogBuilder.setView(convertView);
+//        alertDialogBuilder.setTitle("Choose url");
+        ListView lv = (ListView) convertView.findViewById(R.id.lv);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,names);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (dialog == null) {
+                    Toast.makeText(MainActivity.this, "Some error happend (dialog == null)", Toast.LENGTH_LONG);
+                    return;
+                }
+                dialog.cancel();
+                if (url == null) {
+                    Toast.makeText(MainActivity.this, "Some error happend (edittext == null)", Toast.LENGTH_LONG);
+                    return;
+                }
+                url.setText(adapter.getItem(position));
+            }
+        });
+        dialog = alertDialogBuilder.show();
+    }
+
+//    public void initRealm() {
+//        RealmConfiguration realmConfig = new RealmConfiguration.Builder(this)
+//                .name("myrealm.realm")
+//                .schemaVersion(1)
+//                .build();
+//        Realm.setDefaultConfiguration(realmConfig);
+//    }
+
+
 }
