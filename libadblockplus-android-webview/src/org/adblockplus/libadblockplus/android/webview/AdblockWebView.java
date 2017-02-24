@@ -19,7 +19,6 @@ package org.adblockplus.libadblockplus.android.webview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.webkit.WebView;
@@ -28,7 +27,7 @@ import android.webkit.WebViewClient;
 import org.adblockplus.libadblockplus.FilterEngine;
 import org.adblockplus.libadblockplus.android.AdblockEngine;
 
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -40,7 +39,6 @@ public class AdblockWebView extends WebView {
   public static final AdblockType DEFAULT_ADBLOCK_TYPE = AdblockType.EASY_LIST_NATIVE_CODE;
   private static final Pattern RE_IMAGE = Pattern.compile("\\.(?:gif|png|jpe?g|bmp|ico)$", Pattern.CASE_INSENSITIVE);
   private static final Pattern RE_FONT = Pattern.compile("\\.(?:ttf|woff)$", Pattern.CASE_INSENSITIVE);
-  private static final String TAG = AdblockWebView.class.getSimpleName();
 
   private AdBlocker adBlocker;
   private AdblockType adblockType = DEFAULT_ADBLOCK_TYPE;
@@ -90,10 +88,11 @@ public class AdblockWebView extends WebView {
       @Override
       public void onPageFinished(WebView view, String url) {
         client.onPageFinished(view, url);
-        if ( TextUtils.equals(adBlocker.getLastResult(), url) ) {
-          return;
+        String next = adBlocker.getNext();
+        if (next == null) {
+          adBlocker.saveResult();
         }
-        next();
+        AdblockWebView.this.loadUrl(next);
 //        long timeDiff = 0;
 //        for (Map.Entry<String, Long> entry : times.entrySet()) {
 //          timeDiff = entry.getValue() + timeDiff;
@@ -127,21 +126,18 @@ public class AdblockWebView extends WebView {
         if (errorCode == -5) {
           Log.i("assets2", "rejected by proxy=" + failingUrl);
           adBlocker.putResult(failingUrl);
-        }
-        next();
-      }
+        } else {
 
-      private void next() {
+        }
         String next = adBlocker.getNext();
         if (next == null) {
-          try {
-            adBlocker.saveResult();
-          } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-          }
+          adBlocker.saveResult();
         }
-        AdblockWebView.this.loadUrl("http://" + next + "/");
+        AdblockWebView.this.loadUrl(next);
       }
+
+      private Map<String, Boolean> loadedUrls = new HashMap<>();
+      private Map<String, Long> times = new HashMap<>();
 
 //      @Override
 //      public WebResourceResponse shouldInterceptRequest(WebView view, String url) {

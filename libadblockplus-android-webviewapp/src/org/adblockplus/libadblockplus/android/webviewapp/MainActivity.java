@@ -43,7 +43,6 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
-import org.adblockplus.libadblockplus.android.webview.AdBlocker;
 import org.adblockplus.libadblockplus.android.webview.AdblockType;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.adblockplus.libadblockplus.android.webview.WebViewPageLoadFinishing;
@@ -298,13 +297,13 @@ public class MainActivity extends Activity {
 
     private void loadUrl() {
         hideSoftwareKeyboard();
-//
-//        // if retained with `true` we need to make sure it's ready now
-//        if (USE_EXTERNAL_ADBLOCKENGINE && ADBLOCKENGINE_RETAIN_ASYNC) {
-//            AdblockHelper.get().waitForReady();
-////      webView.setAdblockEngine(AdblockHelper.get().getEngine());
-//        }
-        webView.loadUrl("http://"+AdBlocker.instance.getFirst() + "/");
+
+        // if retained with `true` we need to make sure it's ready now
+        if (USE_EXTERNAL_ADBLOCKENGINE && ADBLOCKENGINE_RETAIN_ASYNC) {
+            AdblockHelper.get().waitForReady();
+//      webView.setAdblockEngine(AdblockHelper.get().getEngine());
+        }
+        webView.loadUrl(prepareUrl(url.getText().toString()));
     }
 
     @Override
