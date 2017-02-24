@@ -48,7 +48,7 @@ public class AdblockWebView4 extends WebView {
     }
 
     private void init(Context context) {
-        adBlocker = new AdBlocker();
+        adBlocker = AdBlocker.instance;
         adBlocker.init(context);
         getSettings().setJavaScriptEnabled(true);
         getSettings().setJavaScriptCanOpenWindowsAutomatically(true);

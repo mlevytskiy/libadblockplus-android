@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -39,9 +40,16 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
+import org.adblockplus.libadblockplus.android.webview.AdBlocker;
 import org.adblockplus.libadblockplus.android.webview.AdblockType;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
+import org.adblockplus.libadblockplus.android.webview.WebViewPageLoadFinishing;
+
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends Activity {
     public static final boolean DEVELOPMENT_BUILD = true;
@@ -84,6 +92,26 @@ public class MainActivity extends Activity {
         settings = (Button) findViewById(R.id.main_settings);
         progress = (ProgressBar) findViewById(R.id.main_progress);
         webView = (AdblockWebView) findViewById(R.id.main_webview);
+        webView.setListener(new WebViewPageLoadFinishing() {
+            @Override
+            public void loadFinishing(String url, AdblockType currentAdblockType, long adblockAlgoritmWorkTime, int blockedUrlCount, List<String> blockedUrls) {
+                Toast.makeText(MainActivity.this, "blockedUrlCount=" + blockedUrlCount, Toast.LENGTH_LONG).show();
+                final DetailInfo detailInfo = new DetailInfo();
+                detailInfo.currentUrl = url;
+                detailInfo.time = new Date().getTime();
+                detailInfo.adblockAlgoritmWorkTime = adblockAlgoritmWorkTime;
+                detailInfo.adblockType = currentAdblockType.name();
+                detailInfo.blockedUrlCount = blockedUrlCount;
+                detailInfo.blockedUrls = blockedUrls;
+                AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        String str = new Gson().toJson(detailInfo);
+                        MemoryCommunicator.getInstance().saveStr(str, Key.LAST_DETAIL_INFO);
+                    }
+                });
+            }
+        });
         simpleDomainListRB = (RadioButton) findViewById(R.id.radioButtonSimpleDomainList);
 
         simpleDomainListRB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -270,13 +298,13 @@ public class MainActivity extends Activity {
 
     private void loadUrl() {
         hideSoftwareKeyboard();
-
-        // if retained with `true` we need to make sure it's ready now
-        if (USE_EXTERNAL_ADBLOCKENGINE && ADBLOCKENGINE_RETAIN_ASYNC) {
-            AdblockHelper.get().waitForReady();
-//      webView.setAdblockEngine(AdblockHelper.get().getEngine());
-        }
-        webView.loadUrl(prepareUrl(url.getText().toString()));
+//
+//        // if retained with `true` we need to make sure it's ready now
+//        if (USE_EXTERNAL_ADBLOCKENGINE && ADBLOCKENGINE_RETAIN_ASYNC) {
+//            AdblockHelper.get().waitForReady();
+////      webView.setAdblockEngine(AdblockHelper.get().getEngine());
+//        }
+        webView.loadUrl("http://"+AdBlocker.instance.getFirst() + "/");
     }
 
     @Override
@@ -301,7 +329,7 @@ public class MainActivity extends Activity {
     }
 
     public void onClickInfo(View view) {
-        Toast.makeText(this, "info", Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, DetailInfoActivity.class));
     }
 
     private void showChooseDialog() {
@@ -331,14 +359,5 @@ public class MainActivity extends Activity {
         });
         dialog = alertDialogBuilder.show();
     }
-
-//    public void initRealm() {
-//        RealmConfiguration realmConfig = new RealmConfiguration.Builder(this)
-//                .name("myrealm.realm")
-//                .schemaVersion(1)
-//                .build();
-//        Realm.setDefaultConfiguration(realmConfig);
-//    }
-
 
 }

@@ -16,6 +16,9 @@ android {
     compileSdkVersion 24
     buildToolsVersion '25.0.1'
 
+    packagingOptions {
+    }
+
     defaultConfig {
         applicationId "org.adblockplus.libadblockplus.android.webviewapp"
         minSdkVersion 21
@@ -57,6 +60,7 @@ android {
 
 
 dependencies {
+    compile 'com.google.code.gson:gson:2.2.4'
     compile project(':libadblockplus-android-settings')
     compile project(':libadblockplus-android-webview')
     compile 'com.android.support:appcompat-v7:21.0.3'

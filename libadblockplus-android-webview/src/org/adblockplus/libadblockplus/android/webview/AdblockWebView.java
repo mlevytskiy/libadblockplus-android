@@ -19,16 +19,16 @@ package org.adblockplus.libadblockplus.android.webview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.adblockplus.libadblockplus.FilterEngine;
 import org.adblockplus.libadblockplus.android.AdblockEngine;
 
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -40,10 +40,12 @@ public class AdblockWebView extends WebView {
   public static final AdblockType DEFAULT_ADBLOCK_TYPE = AdblockType.EASY_LIST_NATIVE_CODE;
   private static final Pattern RE_IMAGE = Pattern.compile("\\.(?:gif|png|jpe?g|bmp|ico)$", Pattern.CASE_INSENSITIVE);
   private static final Pattern RE_FONT = Pattern.compile("\\.(?:ttf|woff)$", Pattern.CASE_INSENSITIVE);
+  private static final String TAG = AdblockWebView.class.getSimpleName();
 
   private AdBlocker adBlocker;
   private AdblockType adblockType = DEFAULT_ADBLOCK_TYPE;
   private AdblockEngine adblockEngine;
+  private WebViewPageLoadFinishing listener;
 
   public AdblockWebView(Context context) {
     super(context);
@@ -60,65 +62,100 @@ public class AdblockWebView extends WebView {
     init(context);
   }
 
+  public void setListener(WebViewPageLoadFinishing listener) {
+    this.listener = listener;
+  }
+
   private void init(Context context) {
-    adBlocker = new AdBlocker();
+    adBlocker = AdBlocker.instance;
     adBlocker.init(context);
     getSettings().setJavaScriptEnabled(true);
     getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
     getSettings().setDomStorageEnabled(true);
+    getSettings().setLoadWithOverviewMode(true);
+    getSettings().setUseWideViewPort(true);
   }
 
   @Override
   public void setWebViewClient(final WebViewClient client) {
 
     WebViewClient newWebViewClient = new WebViewClient() {
+
       @Override
       public void onPageStarted(WebView view, String url, Bitmap favicon) {
         client.onPageStarted(view, url, favicon);
+        Log.i("assets", "page started=" + url);
       }
 
       @Override
       public void onPageFinished(WebView view, String url) {
         client.onPageFinished(view, url);
-        long nativeTimeDiff = 0;
-        for (Map.Entry<String, Long> entry : times1.entrySet()) {
-          nativeTimeDiff = entry.getValue() + nativeTimeDiff;
+        if ( TextUtils.equals(adBlocker.getLastResult(), url) ) {
+          return;
         }
-        times1.clear();
-        double seconds2 = (double)nativeTimeDiff / 1000000000.0;
-
-        int blockedUrlCount = 0;
-        for (Map.Entry<String, Boolean> entry : loadedUrls.entrySet()) {
-          if (entry.getValue()) {
-            blockedUrlCount++;
-          }
-        }
-        loadedUrls.clear();
-
-        Log.d("test", "time for analyzing url:" + " domain list impl:" +  seconds2 + " blockedUrlCount=" + blockedUrlCount);
+        next();
+//        long timeDiff = 0;
+//        for (Map.Entry<String, Long> entry : times.entrySet()) {
+//          timeDiff = entry.getValue() + timeDiff;
+//        }
+//        times.clear();
+//        double seconds2 = (double)timeDiff / 1000000000.0;
+//
+//        int blockedUrlCount = 0;
+//        List<String> blockedUrls = new ArrayList<>();
+//        for (Map.Entry<String, Boolean> entry : loadedUrls.entrySet()) {
+//          if (entry.getValue()) {
+//            blockedUrls.add(entry.getKey());
+//            blockedUrlCount++;
+//          }
+//        }
+//        loadedUrls.clear();
+//
+//        listener.loadFinishing(url, adblockType, timeDiff, blockedUrlCount, blockedUrls);
+//
+//        Log.d("test", "time for analyzing url:" + " domain list impl:" +  seconds2 + " blockedUrlCount=" + blockedUrlCount);
       }
+
+//      @Override
+//      public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+//        super.onReceivedError(view, request, error);
+//      }
 
       @Override
       public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
         client.onReceivedError(view, errorCode, description, failingUrl);
-      }
-
-      private Map<String, Boolean> loadedUrls = new HashMap<>();
-      private Map<String, Long> times1 = new HashMap<>();
-
-      @Override
-      public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-        boolean result;
-        if (!loadedUrls.containsKey(url)) {
-          long time1 = System.nanoTime();
-          result = filter(view, url, adblockType, loadedUrls);
-          times1.put(url, System.nanoTime() - time1);
-        } else {
-          result = loadedUrls.get(url);
+        if (errorCode == -5) {
+          Log.i("assets2", "rejected by proxy=" + failingUrl);
+          adBlocker.putResult(failingUrl);
         }
-
-        return result ? AdBlocker.createEmptyResource() : super.shouldInterceptRequest(view, url);
+        next();
       }
+
+      private void next() {
+        String next = adBlocker.getNext();
+        if (next == null) {
+          try {
+            adBlocker.saveResult();
+          } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+          }
+        }
+        AdblockWebView.this.loadUrl("http://" + next + "/");
+      }
+
+//      @Override
+//      public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+//        boolean result;
+//        if (!loadedUrls.containsKey(url)) {
+//          long time1 = System.nanoTime();
+//          result = filter(view, url, adblockType, loadedUrls);
+//          times.put(url, System.nanoTime() - time1);
+//        } else {
+//          result = loadedUrls.get(url);
+//        }
+//
+//        return result ? AdBlocker.createEmptyResource() : super.shouldInterceptRequest(view, url);
+//      }
 
     };
 

@@ -5,5 +5,7 @@ package org.adblockplus.libadblockplus.android.webviewapp;
  */
 
 public enum Key {
-    ADBLOCK_TYPE
+    ADBLOCK_TYPE,
+    LAST_DETAIL_INFO,
+    DETAL_INFO_HISTORY
 }
